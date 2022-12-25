@@ -17,6 +17,22 @@ require('dotenv').config();
 
 app.use(express.json());
 var cors = require('cors');
+let whitelist = ['http://localhost:4200', 'https://globixs.web.app'];
+let corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(null, true);
+        }
+    },
+    credentials: true,
+    preflightContinue: false,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Total-Count', 'x-access-token',
+        'Content-Range', 'Access-Control-Allow-Methods', '*'],
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
+};
+app.use(cors(corsOptions));
 
 const transport = {
     host: "smtp.gmail.com",
@@ -28,28 +44,6 @@ const transport = {
     }
 }
 var transporter = nodemailer.createTransport(transport);
-
-function sendSubscriptionEmail(email) {
-    return new Promise(async (resolve, reject) => {
-
-        var mailOptions = {
-            from: email?.email,
-            to: process.env.TO_EMAIL,
-            subject: process.env.CONTACT_US_EMAIL_SUBJECT,
-            html: `<p>Hello</p>
-            <p>You have received a new subscription email. Have a nice day!</p>
-            <p>Cheers,<br>GiveTheNeed</p>`
-        };
-
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                reject(error);
-            } else {
-                resolve({});
-            }
-        });
-    });
-}
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -66,13 +60,14 @@ app.post('/globixs/api/hiring', sendHiringEmail);
 
 async function sendContactUsEmail(req, res) {
     try {
+        console.log('req.body', req.body);
         var mailOptions = {
             // from: req?.from,
-            to: process.env.TO_EMAIL,
-            subject: process.env.CONTACT_US_EMAIL_SUBJECT,
-            html: `<p>Hello</p>
-            <p>You have received a new subscription email. Have a nice day!</p>
-            <p>Cheers,<br>GiveTheNeed</p>`
+            to: req.body.email,
+            subject: req.body.subject || process.env.CONTACT_US_EMAIL_SUBJECT,
+            html: `<p>Hello ${req.body.name},</p>
+            <p>Thank you for contacting us. Have a nice day!</p>
+            <p>Cheers,<br>Globixs</p>`
         };
 
         sendEmail(mailOptions).then((doc) => {
@@ -92,8 +87,8 @@ async function sendHireEmail(req, res) {
             to: process.env.TO_EMAIL,
             subject: process.env.CONTACT_US_EMAIL_SUBJECT,
             html: `<p>Hello</p>
-            <p>You have received a new subscription email. Have a nice day!</p>
-            <p>Cheers,<br>GiveTheNeed</p>`
+            <p>Thank you for reaching out to us. Have a nice day!</p>
+            <p>Cheers,<br>Globixs</p>`
         };
 
         sendEmail(mailOptions).then((doc) => {
@@ -113,8 +108,8 @@ async function sendHiringEmail(req, res) {
             to: process.env.TO_EMAIL,
             subject: process.env.CONTACT_US_EMAIL_SUBJECT,
             html: `<p>Hello</p>
-            <p>You have received a new subscription email. Have a nice day!</p>
-            <p>Cheers,<br>GiveTheNeed</p>`
+            <p>Thank you for reaching out to us, we will get back to you shortly. Have a nice day!</p>
+            <p>Cheers,<br>Globixs</p>`
         };
 
         sendEmail(mailOptions).then((doc) => {
