@@ -84,8 +84,8 @@ async function sendHireEmail(req, res) {
     try {
         var mailOptions = {
             // from: req?.from,
-            to: process.env.TO_EMAIL,
-            subject: process.env.CONTACT_US_EMAIL_SUBJECT,
+            to: req.body.email || process.env.TO_EMAIL,
+            subject: process.env.HIRE_EMAIL_SUBJECT,
             html: `<p>Hello</p>
             <p>Thank you for reaching out to us. Have a nice day!</p>
             <p>Cheers,<br>Globixs</p>`
@@ -105,8 +105,8 @@ async function sendHiringEmail(req, res) {
     try {
         var mailOptions = {
             // from: req?.from,
-            to: process.env.TO_EMAIL,
-            subject: process.env.CONTACT_US_EMAIL_SUBJECT,
+            to: req.body.email || process.env.TO_EMAIL,
+            subject: process.env.GET_HIRED_EMAIL_SUBJECT,
             html: `<p>Hello</p>
             <p>Thank you for reaching out to us, we will get back to you shortly. Have a nice day!</p>
             <p>Cheers,<br>Globixs</p>`
